@@ -52,6 +52,7 @@ Zotero.Connector_Browser = new function() {
 	var _instanceIDsForTabs = {};
 	var _selectCallbacksForTabIDs = {};
 	var _incompatibleVersionMessageShown;
+	var _contextSendToZoteroId;
 	
 	/**
 	 * Called when translators are available for a given page
@@ -80,6 +81,10 @@ Zotero.Connector_Browser = new function() {
 			title:"Save to Zotero ("+translatorName+")"
 		});
 		
+		_contextSendToZoteroId = chrome.contextMenus.create({"title":"Save to Zotero", "onclick":function(info, tab) {
+			Zotero.Connector_Browser.onPageActionClicked(tab);
+		}});
+
 		chrome.pageAction.show(tab.id);
 	}
 	
@@ -149,6 +154,7 @@ Zotero.Connector_Browser = new function() {
 	 * Removes information about a specific tab
 	 */
 	function _clearInfoForTab(tabID) {
+	 	chrome.contextMenus.remove(_contextSendToZoteroId);
 		delete _translatorsForTabIDs[tabID];
 		delete _instanceIDsForTabs[tabID];
 		delete _selectCallbacksForTabIDs[tabID];
